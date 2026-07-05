@@ -24,16 +24,21 @@ jobs:
 
       - name: Запуск парсера и обновление данных ВКонтакте
         run: |
-          cd scripts_and_raw_data/
+          # Автоопределение директории со скриптами
+          if [ -d "scripts_and_raw_data" ]; then
+            cd scripts_and_raw_data
+          fi
           python3 fetch_all_vk.py || echo "Стена уже актуальна"
           python3 build_site.py
-          cp index.html ../index.html
-          cp vk_posts_all.json ../vk_posts_all.json
+          if [ -d "../scripts_and_raw_data" ]; then
+            cp index.html ../index.html 2>/dev/null || true
+            cp vk_posts_all.json ../vk_posts_all.json 2>/dev/null || true
+          fi
 
-      - name: Коммит и публикация обновленного сайта
+      - name: Коммит и публикация Обновленного сайта
         run: |
           git config --global user.name "VK-AutoBot"
           git config --global user.name "autobot@photo-ai-studio.ru"
-          git add index.html vk_posts_all.json
+          git add -A
           git commit -m "🤖 Автоматическое обновление данных портфолио из группы ВК [skip ci]" || echo "Нет новых изменений"
           git push
