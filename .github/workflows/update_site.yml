@@ -14,10 +14,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Клонирование репозитория
-        uses: actions/checkout@v4
+        uses: actions/checkout@main
 
       - name: Установка Python 3
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@main
         with:
           python-version: '3.11'
 
