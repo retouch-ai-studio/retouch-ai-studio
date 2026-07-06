@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://retouch-ai-studio.github.io/retouch-ai-studio/sitemap.xml

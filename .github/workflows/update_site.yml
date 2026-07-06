@@ -2,9 +2,9 @@ name: Автоматическое обновление сайта из ВКон
 
 on:
   schedule:
-    # Запуск каждую ночь в 00:00 UTC (03:00 по Москве)
+    # Каждый день в 00:00 UTC = 03:00 по Москве
     - cron: '0 0 * * *'
-  workflow_dispatch: # Возможность запуска вручную по кнопке
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -14,28 +14,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Клонирование репозитория
-        uses: actions/checkout@main
+        uses: actions/checkout@v4
 
       - name: Установка Python 3
-        uses: actions/setup-python@main
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
       - name: Установка библиотек
         run: |
-          pip install beautifulsoup4 pillow requests
+          python -m pip install --upgrade pip
+          pip install requests beautifulsoup4 pillow
 
-      - name: Запуск парсера и обновление данных ВКонтакте
+      - name: Обновление базы портфолио из ВК
+        env:
+          VK_SERVICE_TOKEN: ${{ secrets.VK_SERVICE_TOKEN }}
+          VK_TOKEN: ${{ secrets.VK_TOKEN }}
         run: |
-          if [ -d "scripts_and_raw_data" ]; then
-            cd scripts_and_raw_data
-          fi
-          python3 fetch_all_vk.py || true
-          python3 build_site.py || true
-          if [ -d "../scripts_and_raw_data" ]; then
-            cp index.html ../index.html 2>/dev/null || true
-            cp vk_posts_all.json ../vk_posts_all.json 2>/dev/null || true
-          fi
+          python scripts_and_raw_data/fetch_all_vk.py
+          python scripts_and_raw_data/build_site.py
 
       - name: Коммит и публикация обновленного сайта
         run: |
@@ -43,8 +40,8 @@ jobs:
           git config --global user.email "autobot@photo-ai-studio.ru"
           git add -A
           if git diff --staged --quiet; then
-            echo "Новых публикаций в группе пока нет — база данных актуальна."
+            echo "Новых изменений нет — сайт актуален."
           else
-            git commit -m "🤖 Автоматическое обновление данных портфолио из группы ВК [skip ci]"
+            git commit -m "🤖 Обновление портфолио из ВК"
             git push
           fi
