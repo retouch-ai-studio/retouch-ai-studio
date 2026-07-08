@@ -703,13 +703,40 @@
         /* VK Live Widget Container */
         .live-feed-container {
             display: block;
-            max-width: 800px;
+            max-width: 620px;
             margin: 0 auto;
             background: var(--bg-card);
             border: 1px solid var(--border-glass);
             border-radius: 24px;
-            padding: 30px;
+            padding: 30px 0 20px;
             text-align: center;
+            overflow: hidden;
+            position: relative;
+        }
+        .vk-wrap {
+            position: relative;
+            width: 100%;
+            margin: 0 auto;
+            overflow: hidden;
+            background: #0a0b12;
+        }
+        iframe.vk-widget {
+            display: block;
+            margin: 0 auto;
+            border: 0;
+            overflow: hidden;
+        }
+        .vk-fallback {
+            display: none;
+            margin: 20px;
+            padding: 28px 20px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, rgba(0,242,254,0.08), rgba(138,43,226,0.1));
+            border: 1px dashed rgba(0,242,254,0.4);
+        }
+        .vk-fallback.show { display: block; }
+        @media (max-width: 640px) {
+            .live-feed-container { padding: 20px 0 10px; border-radius: 16px; }
         }
 
         .auto-update-badge {
@@ -1330,17 +1357,30 @@
             </div>
             <p style="color: var(--text-mut); margin-bottom: 25px; text-align: center;">Ниже — настоящая стена нашей группы ВКонтакте. Каждый новый пост с работой появляется здесь сразу после публикации в сообществе.</p>
 
-            <div style="margin: 0 auto; max-width: 580px; background: var(--bg-card); border-radius: 14px; padding: 10px; border: 1px solid var(--border-glass);">
+            <div class="vk-wrap" id="vkWrap">
                 <iframe
-                    src="https://vk.com/widget_community.php?app=0&amp;gid=239853638&amp;mode=3&amp;width=560&amp;height=900&amp;wide=1&amp;color1=07080d&amp;color2=ffffff&amp;color3=00f2fe&amp;favicon=0&amp;url=https%3A%2F%2Fretouch-ai-studio.github.io%2Fretouch-ai-studio%2F%23portfolio"
-                    width="100%"
-                    height="920"
-                    style="border:0; border-radius:10px; display:block; margin:0 auto; max-width:560px;"
-                    scrolling="auto"
+                    class="vk-widget"
+                    id="vkWidget"
+                    src="https://vk.com/widget_community.php?app=0&amp;gid=239853638&amp;mode=3&amp;width=560&amp;height=880&amp;wide=1&amp;color1=0a0b12&amp;color2=ffffff&amp;color3=00f2fe&amp;favicon=0&amp;url=https%3A%2F%2Fretouch-ai-studio.github.io%2Fretouch-ai-studio%2F"
+                    width="560"
+                    height="880"
+                    scrolling="no"
                     frameborder="0"
                     title="Прямая лента сообщества ВКонтакте — Photo AI"
-                    allowtransparency="true">
+                    allowtransparency="true"
+                    onload="document.getElementById('vkWidget').dataset.loaded='1';">
                 </iframe>
+
+                <div class="vk-fallback" id="vkFallback">
+                    <div style="font-size:2rem; margin-bottom:10px;">📱</div>
+                    <p style="margin:0 0 14px; color:var(--text-mut); font-size:.95rem;">
+                        Похоже, в вашем браузере блокировщик рекламы скрыл встроенную ленту ВК.
+                        Актуальные работы и все новые посты доступны в нашей официальной группе:
+                    </p>
+                    <a href="https://vk.com/retouch_ai_online" target="_blank" class="btn-primary" rel="noopener" style="display:inline-block;">
+                        Открыть группу ВКонтакте ↗
+                    </a>
+                </div>
             </div>
 
             <div style="margin-top: 30px; text-align: center;">
@@ -1714,13 +1754,33 @@
             if (e.target.id === 'lightboxModal') document.getElementById('lightboxModal').style.display = 'none';
         }
 
+        function resizeVkWidget() {
+            const fr = document.getElementById('vkWidget');
+            if (!fr) return;
+            const wrap = document.getElementById('vkWrap');
+            const maxW = Math.min(wrap.clientWidth - 20, 560);
+            fr.style.width = maxW + 'px';
+        }
+        function checkVkFallback() {
+            const fr = document.getElementById('vkWidget');
+            const fb = document.getElementById('vkFallback');
+            if (!fr || !fb) return;
+            setTimeout(() => {
+                if (fr.dataset.loaded !== '1') {
+                    fb.classList.add('show');
+                    fr.style.height = '0';
+                }
+            }, 4000);
+        }
+        window.addEventListener('resize', resizeVkWidget);
         window.onload = () => {
             updateDynamicCounts();
             updateCalc();
             renderPortfolio('all');
-            // По умолчанию показываем живую ленту ВК
             switchFeedMode('live');
+            resizeVkWidget();
+            checkVkFallback();
         };
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a1823c968f679f9a',t:'MTc4MzU0NjcxNA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a18264bb8b209f9a',t:'MTc4MzU0ODM1OA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
