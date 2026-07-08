@@ -55,7 +55,7 @@
         });
       })();
     </script>
-    <script src="https://vk.com/js/api/openapi.js?169" type="text/javascript"></script>
+    <!-- Старый VK OpenAPI отключён (глючит в новых версиях ВК). Используется прямой iframe-виджет сообщества ниже. -->
     <style>
         :root {
             --bg-dark: #07080d;
@@ -702,7 +702,7 @@
 
         /* VK Live Widget Container */
         .live-feed-container {
-            display: none;
+            display: block;
             max-width: 800px;
             margin: 0 auto;
             background: var(--bg-card);
@@ -1307,24 +1307,52 @@
         </div>
     </section>
 
-    <!-- Hybrid Feed Section: Static Core + Live Stream Switch -->
+    <!-- Hybrid Feed Section: Live VK Widget first, static catalog as fallback -->
     <section id="portfolio">
         <div class="section-header">
             <h2>Портфолио и <span class="gradient-text">живая лента ВК</span></h2>
-            <p>Здесь сохранён быстрый каталог кейсов и прямой эфир официальной группы ВКонтакте.</p>
+            <p>Лента обновляется автоматически в реальном времени: как только в группе появляется новый пост с работой — он сразу отображается на сайте.</p>
         </div>
 
         <div class="mode-switcher">
-            <button class="mode-btn active" id="btnModeStatic" onclick="switchFeedMode('static')">
-                <span>⭐ Каталог портфолио (<span id="portfolioCountLabel">54</span> кейсов)</span>
+            <button class="mode-btn active" id="btnModeLive" onclick="switchFeedMode('live')">
+                <span>⚡ Живые посты из группы ВК</span>
             </button>
-            <button class="mode-btn" id="btnModeLive" onclick="switchFeedMode('live')">
-                <span>⚡ Прямой эфир из сообщества ВК</span>
+            <button class="mode-btn" id="btnModeStatic" onclick="switchFeedMode('static')">
+                <span>⭐ Подборка лучших работ</span>
             </button>
         </div>
 
-        <!-- Static Gallery View -->
-        <div id="staticFeedContainer">
+        <!-- Live Feed Widget View (iframe — работает без токена и без ИНН) -->
+        <div id="liveFeedContainer" class="live-feed-container">
+            <div class="auto-update-badge">
+                <span>🔄 Прямое подключение к vk.com/retouch_ai_online — обновляется в реальном времени</span>
+            </div>
+            <p style="color: var(--text-mut); margin-bottom: 25px; text-align: center;">Ниже — настоящая стена нашей группы ВКонтакте. Каждый новый пост с работой появляется здесь сразу после публикации в сообществе.</p>
+
+            <div style="margin: 0 auto; max-width: 580px; background: var(--bg-card); border-radius: 14px; padding: 10px; border: 1px solid var(--border-glass);">
+                <iframe
+                    src="https://vk.com/widget_community.php?app=0&amp;gid=239853638&amp;mode=3&amp;width=560&amp;height=900&amp;wide=1&amp;color1=07080d&amp;color2=ffffff&amp;color3=00f2fe&amp;favicon=0&amp;url=https%3A%2F%2Fretouch-ai-studio.github.io%2Fretouch-ai-studio%2F%23portfolio"
+                    width="100%"
+                    height="920"
+                    style="border:0; border-radius:10px; display:block; margin:0 auto; max-width:560px;"
+                    scrolling="auto"
+                    frameborder="0"
+                    title="Прямая лента сообщества ВКонтакте — Photo AI"
+                    allowtransparency="true">
+                </iframe>
+            </div>
+
+            <div style="margin-top: 30px; text-align: center;">
+                <a href="https://vk.com/retouch_ai_online" target="_blank" class="btn-primary" rel="noopener">Открыть группу ВКонтакте ↗</a>
+                <p style="color: var(--text-mut); font-size: 0.85rem; margin-top: 14px;">
+                    Если лента не отображается, скорее всего ваш браузер или блокировщик рекламы запрещает загрузку виджетов ВК. В таком случае откройте группу по кнопке выше — там всегда актуальные работы.
+                </p>
+            </div>
+        </div>
+
+        <!-- Static Gallery View (подборка-страховка на случай блокировки iframe) -->
+        <div id="staticFeedContainer" style="display:none;">
             <div class="filter-pills">
                 <button class="filter-pill active" onclick="filterPosts('all')">Все записи (<span id="filterAllCount">54</span>)</button>
                 <button class="filter-pill" onclick="filterPosts('retouch')">AI-Ретушь</button>
@@ -1337,20 +1365,10 @@
             <div class="load-more-wrap" id="showMoreWrapper" style="display:none;">
                 <button class="btn-secondary" id="showMorePortfolio" onclick="showMorePosts()">Показать ещё</button>
             </div>
-        </div>
-
-        <!-- Live Feed Widget View -->
-        <div id="liveFeedContainer" class="live-feed-container">
-            <div class="auto-update-badge">
-                <span>🔄 Прямое подключение к серверам vk.com/retouch_ai_online</span>
-            </div>
-            <p style="color: var(--text-mut); margin-bottom: 25px;">Если виджет ВК не отобразился из-за настроек браузера, откройте официальную группу по кнопке ниже. Статичный каталог выше остаётся доступен всегда.</p>
-            
-            <div id="vk_groups" style="margin: 0 auto; display: flex; justify-content: center;"></div>
-            
-            <div style="margin-top: 30px;">
-                <a href="https://vk.com/retouch_ai_online" target="_blank" class="btn-primary">Открыть группу в приложении ВКонтакте ↗</a>
-            </div>
+            <p style="color: var(--text-mut); font-size: 0.85rem; text-align: center; margin-top: 20px;">
+                Это фиксированная подборка лучших работ. Свежие заказы смотрите во вкладке
+                <a href="#portfolio" onclick="switchFeedMode('live'); return false;" style="color: var(--accent-cyan);">«Живые посты из ВК»</a>.
+            </p>
         </div>
     </section>
 
@@ -1401,7 +1419,7 @@
 
     <footer>
         <div class="footer-logo">✦ PHOTO AI | AI-РЕТУШЬ, БИЗНЕС-ПОРТРЕТЫ И РЕСТАВРАЦИЯ</div>
-        <p class="footer-sub">Официальный интерактивный портал сообщества ВКонтакте (club239853638)<br>Работаем онлайн. Портфолио автоматически пополняется свежими публикациями из группы ВК.</p>
+        <p class="footer-sub">Официальный интерактивный портал сообщества ВКонтакте (club239853638)<br>Работаем онлайн. Актуальные работы и живая лента заказов загружаются напрямую из группы ВК в реальном времени.</p>
         <div class="footer-links">
             <a href="https://vk.com/retouch_ai_online" target="_blank">Перейти в официальную группу ВК ↗</a>
             <a href="privacy.html">Конфиденциальность</a>
@@ -1665,32 +1683,22 @@
             renderPortfolio(cat);
         }
 
-        let vkWidgetLoaded = false;
         function switchFeedMode(mode) {
             const staticCont = document.getElementById('staticFeedContainer');
-            const liveCont = document.getElementById('liveFeedContainer');
-            const btnStatic = document.getElementById('btnModeStatic');
-            const btnLive = document.getElementById('btnModeLive');
+            const liveCont   = document.getElementById('liveFeedContainer');
+            const btnStatic  = document.getElementById('btnModeStatic');
+            const btnLive    = document.getElementById('btnModeLive');
 
             if (mode === 'static') {
                 staticCont.style.display = 'block';
-                liveCont.style.display = 'none';
+                liveCont.style.display   = 'none';
                 btnStatic.classList.add('active');
                 btnLive.classList.remove('active');
             } else {
                 staticCont.style.display = 'none';
-                liveCont.style.display = 'block';
+                liveCont.style.display   = 'block';
                 btnStatic.classList.remove('active');
                 btnLive.classList.add('active');
-                
-                if (!vkWidgetLoaded && typeof VK !== 'undefined') {
-                    try {
-                        VK.Widgets.Group("vk_groups", {mode: 4, width: "auto", height: "650"}, 239853638);
-                        vkWidgetLoaded = true;
-                    } catch (e) {
-                        console.log("VK Widget preview constraint:", e);
-                    }
-                }
             }
         }
 
@@ -1710,7 +1718,9 @@
             updateDynamicCounts();
             updateCalc();
             renderPortfolio('all');
+            // По умолчанию показываем живую ленту ВК
+            switchFeedMode('live');
         };
     </script>
-</body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a1823c968f679f9a',t:'MTc4MzU0NjcxNA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
