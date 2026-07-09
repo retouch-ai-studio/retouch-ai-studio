@@ -55,7 +55,7 @@
         });
       })();
     </script>
-    <!-- Старый VK OpenAPI отключён (глючит в новых версиях ВК). Используется прямой iframe-виджет сообщества ниже. -->
+    <!-- -->
     <style>
         :root {
             --bg-dark: #07080d;
@@ -576,36 +576,6 @@
             resize: none;
         }
 
-        /* Mode Switcher for Portfolio vs Live Feed */
-        .mode-switcher {
-            display: flex;
-            justify-content: center;
-            gap: 16px;
-            margin-bottom: 30px;
-        }
-
-        .mode-btn {
-            background: rgba(20, 24, 38, 0.9);
-            border: 2px solid var(--border-glass);
-            color: var(--text-mut);
-            padding: 14px 28px;
-            border-radius: 30px;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .mode-btn.active {
-            background: linear-gradient(135deg, rgba(0, 242, 254, 0.2), rgba(138, 43, 226, 0.2));
-            border-color: var(--accent-cyan);
-            color: #fff;
-            box-shadow: 0 0 20px rgba(0, 242, 254, 0.3);
-        }
-
         .filter-pills {
             display: flex;
             justify-content: center;
@@ -698,45 +668,6 @@
             color: #666;
             border-top: 1px solid rgba(255,255,255,0.06);
             padding-top: 12px;
-        }
-
-        /* VK Live Widget Container */
-        .live-feed-container {
-            display: block;
-            max-width: 620px;
-            margin: 0 auto;
-            background: var(--bg-card);
-            border: 1px solid var(--border-glass);
-            border-radius: 24px;
-            padding: 30px 0 20px;
-            text-align: center;
-            overflow: hidden;
-            position: relative;
-        }
-        .vk-wrap {
-            position: relative;
-            width: 100%;
-            margin: 0 auto;
-            overflow: hidden;
-            background: #0a0b12;
-        }
-        iframe.vk-widget {
-            display: block;
-            margin: 0 auto;
-            border: 0;
-            overflow: hidden;
-        }
-        .vk-fallback {
-            display: none;
-            margin: 20px;
-            padding: 28px 20px;
-            border-radius: 14px;
-            background: linear-gradient(135deg, rgba(0,242,254,0.08), rgba(138,43,226,0.1));
-            border: 1px dashed rgba(0,242,254,0.4);
-        }
-        .vk-fallback.show { display: block; }
-        @media (max-width: 640px) {
-            .live-feed-container { padding: 20px 0 10px; border-radius: 16px; }
         }
 
         .auto-update-badge {
@@ -1334,82 +1265,36 @@
         </div>
     </section>
 
-    <!-- Hybrid Feed Section: Live VK Widget first, static catalog as fallback -->
+    <!-- Static Portfolio as the main view (works in every browser, no AdBlock issues) -->
     <section id="portfolio">
         <div class="section-header">
-            <h2>Портфолио и <span class="gradient-text">живая лента ВК</span></h2>
-            <p>Лента обновляется автоматически в реальном времени: как только в группе появляется новый пост с работой — он сразу отображается на сайте.</p>
+            <h2>Портфолио <span class="gradient-text">работ</span></h2>
+            <p>Здесь собраны примеры наших работ по AI-ретуши, бизнес-портретам, нейро-образам и реставрации. Свежие заказы и актуальные публикации — в нашей официальной группе ВКонтакте.</p>
         </div>
 
-        <div class="mode-switcher">
-            <button class="mode-btn active" id="btnModeLive" onclick="switchFeedMode('live')">
-                <span>⚡ Живые посты из группы ВК</span>
-            </button>
-            <button class="mode-btn" id="btnModeStatic" onclick="switchFeedMode('static')">
-                <span>⭐ Подборка лучших работ</span>
-            </button>
+        <div style="text-align:center; margin:0 0 24px;">
+            <a href="https://vk.com/retouch_ai_online" target="_blank" rel="noopener" class="btn-primary" style="display:inline-flex; align-items:center; gap:8px;">
+                <span style="font-size:1.2rem;">💙</span> Открыть свежие работы в группе ВК ↗
+            </a>
         </div>
 
-        <!-- Live Feed Widget View (iframe — работает без токена и без ИНН) -->
-        <div id="liveFeedContainer" class="live-feed-container">
-            <div class="auto-update-badge">
-                <span>🔄 Прямое подключение к vk.com/retouch_ai_online — обновляется в реальном времени</span>
-            </div>
-            <p style="color: var(--text-mut); margin-bottom: 25px; text-align: center;">Ниже — настоящая стена нашей группы ВКонтакте. Каждый новый пост с работой появляется здесь сразу после публикации в сообществе.</p>
-
-            <div class="vk-wrap" id="vkWrap">
-                <iframe
-                    class="vk-widget"
-                    id="vkWidget"
-                    src="https://vk.com/widget_community.php?app=0&amp;gid=239853638&amp;mode=3&amp;width=560&amp;height=880&amp;wide=1&amp;color1=0a0b12&amp;color2=ffffff&amp;color3=00f2fe&amp;favicon=0&amp;url=https%3A%2F%2Fretouch-ai-studio.github.io%2Fretouch-ai-studio%2F"
-                    width="560"
-                    height="880"
-                    scrolling="no"
-                    frameborder="0"
-                    title="Прямая лента сообщества ВКонтакте — Photo AI"
-                    allowtransparency="true"
-                    onload="document.getElementById('vkWidget').dataset.loaded='1';">
-                </iframe>
-
-                <div class="vk-fallback" id="vkFallback">
-                    <div style="font-size:2rem; margin-bottom:10px;">📱</div>
-                    <p style="margin:0 0 14px; color:var(--text-mut); font-size:.95rem;">
-                        Похоже, в вашем браузере блокировщик рекламы скрыл встроенную ленту ВК.
-                        Актуальные работы и все новые посты доступны в нашей официальной группе:
-                    </p>
-                    <a href="https://vk.com/retouch_ai_online" target="_blank" class="btn-primary" rel="noopener" style="display:inline-block;">
-                        Открыть группу ВКонтакте ↗
-                    </a>
-                </div>
-            </div>
-
-            <div style="margin-top: 30px; text-align: center;">
-                <a href="https://vk.com/retouch_ai_online" target="_blank" class="btn-primary" rel="noopener">Открыть группу ВКонтакте ↗</a>
-                <p style="color: var(--text-mut); font-size: 0.85rem; margin-top: 14px;">
-                    Если лента не отображается, скорее всего ваш браузер или блокировщик рекламы запрещает загрузку виджетов ВК. В таком случае откройте группу по кнопке выше — там всегда актуальные работы.
-                </p>
-            </div>
+        <div class="filter-pills">
+            <button class="filter-pill active" onclick="filterPosts('all')">Все работы (<span id="filterAllCount">12</span>)</button>
+            <button class="filter-pill" onclick="filterPosts('retouch')">AI-Ретушь</button>
+            <button class="filter-pill" onclick="filterPosts('business')">Деловое фото</button>
+            <button class="filter-pill" onclick="filterPosts('neuro')">Нейро-образы</button>
+            <button class="filter-pill" onclick="filterPosts('restoration')">Реставрация</button>
         </div>
 
-        <!-- Static Gallery View (подборка-страховка на случай блокировки iframe) -->
-        <div id="staticFeedContainer" style="display:none;">
-            <div class="filter-pills">
-                <button class="filter-pill active" onclick="filterPosts('all')">Все записи (<span id="filterAllCount">54</span>)</button>
-                <button class="filter-pill" onclick="filterPosts('retouch')">AI-Ретушь</button>
-                <button class="filter-pill" onclick="filterPosts('business')">Деловое фото</button>
-                <button class="filter-pill" onclick="filterPosts('neuro')">Нейро-образы</button>
-                <button class="filter-pill" onclick="filterPosts('restoration')">Реставрация</button>
-            </div>
-
-            <div class="portfolio-grid" id="portfolioGrid"></div>
-            <div class="load-more-wrap" id="showMoreWrapper" style="display:none;">
-                <button class="btn-secondary" id="showMorePortfolio" onclick="showMorePosts()">Показать ещё</button>
-            </div>
-            <p style="color: var(--text-mut); font-size: 0.85rem; text-align: center; margin-top: 20px;">
-                Это фиксированная подборка лучших работ. Свежие заказы смотрите во вкладке
-                <a href="#portfolio" onclick="switchFeedMode('live'); return false;" style="color: var(--accent-cyan);">«Живые посты из ВК»</a>.
-            </p>
+        <div class="portfolio-grid" id="portfolioGrid"></div>
+        <div class="load-more-wrap" id="showMoreWrapper" style="display:none;">
+            <button class="btn-secondary" id="showMorePortfolio" onclick="showMorePosts()">Показать ещё</button>
         </div>
+
+        <p style="color:var(--text-mut); font-size:.85rem; text-align:center; margin-top:24px;">
+            Хотите, чтобы ваша работа тоже попала в портфолио — просто укажите при заказе «можно публиковать».<br>
+            Все работы в каталоге — реальные заказы клиентов.
+        </p>
     </section>
 
     <section id="faq">
@@ -1459,7 +1344,7 @@
 
     <footer>
         <div class="footer-logo">✦ PHOTO AI | AI-РЕТУШЬ, БИЗНЕС-ПОРТРЕТЫ И РЕСТАВРАЦИЯ</div>
-        <p class="footer-sub">Официальный интерактивный портал сообщества ВКонтакте (club239853638)<br>Работаем онлайн. Актуальные работы и живая лента заказов загружаются напрямую из группы ВК в реальном времени.</p>
+        <p class="footer-sub">Официальный сайт сообщества ВКонтакте (club239853638)<br>Все заказы и связь с мастером — через сообщения официальной группы ВК.</p>
         <div class="footer-links">
             <a href="https://vk.com/retouch_ai_online" target="_blank">Перейти в официальную группу ВК ↗</a>
             <a href="privacy.html">Конфиденциальность</a>
@@ -1723,25 +1608,6 @@
             renderPortfolio(cat);
         }
 
-        function switchFeedMode(mode) {
-            const staticCont = document.getElementById('staticFeedContainer');
-            const liveCont   = document.getElementById('liveFeedContainer');
-            const btnStatic  = document.getElementById('btnModeStatic');
-            const btnLive    = document.getElementById('btnModeLive');
-
-            if (mode === 'static') {
-                staticCont.style.display = 'block';
-                liveCont.style.display   = 'none';
-                btnStatic.classList.add('active');
-                btnLive.classList.remove('active');
-            } else {
-                staticCont.style.display = 'none';
-                liveCont.style.display   = 'block';
-                btnStatic.classList.remove('active');
-                btnLive.classList.add('active');
-            }
-        }
-
         function openModal(p) {
             document.getElementById('modalImg').src = p.img;
             document.getElementById('modalImg').alt = p.alt || p.title;
@@ -1754,33 +1620,11 @@
             if (e.target.id === 'lightboxModal') document.getElementById('lightboxModal').style.display = 'none';
         }
 
-        function resizeVkWidget() {
-            const fr = document.getElementById('vkWidget');
-            if (!fr) return;
-            const wrap = document.getElementById('vkWrap');
-            const maxW = Math.min(wrap.clientWidth - 20, 560);
-            fr.style.width = maxW + 'px';
-        }
-        function checkVkFallback() {
-            const fr = document.getElementById('vkWidget');
-            const fb = document.getElementById('vkFallback');
-            if (!fr || !fb) return;
-            setTimeout(() => {
-                if (fr.dataset.loaded !== '1') {
-                    fb.classList.add('show');
-                    fr.style.height = '0';
-                }
-            }, 4000);
-        }
-        window.addEventListener('resize', resizeVkWidget);
         window.onload = () => {
             updateDynamicCounts();
             updateCalc();
             renderPortfolio('all');
-            switchFeedMode('live');
-            resizeVkWidget();
-            checkVkFallback();
         };
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a18264bb8b209f9a',t:'MTc4MzU0ODM1OA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a1865a8a0c908cb0',t:'MTc4MzU4OTg4NA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
