@@ -168,8 +168,40 @@ footer{border-top:1px solid var(--stroke);padding:60px max(5%,20px) 36px;text-al
 /* Floating VK button */
 .fvk{position:fixed;right:22px;bottom:22px;z-index:99;width:58px;height:58px;border-radius:50%;display:grid;place-items:center;background:var(--gradvk);color:#fff;text-decoration:none;box-shadow:0 10px 28px rgba(0,119,255,.5);transition:.25s;animation:fvkPulse 2.8s infinite}
 .fvk:hover{transform:scale(1.08) translateY(-3px)}
-.fvk svg{width:28px;height:28px;fill:#fff}
+        .fvk svg{width:28px;height:28px;fill:#fff}
 @keyframes fvkPulse{0%,100%{box-shadow:0 10px 28px rgba(0,119,255,.5)}50%{box-shadow:0 10px 40px rgba(0,119,255,.85),0 0 0 12px rgba(0,119,255,.12)}}
+
+/* ============ 3D BEFORE/AFTER TILES ============ */
+.ba-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:22px;
+  perspective:1200px;margin-top:30px;
+}
+.ba-tile{
+  position:relative;border-radius:18px;overflow:hidden;aspect-ratio:4/5;cursor:pointer;
+  transform-style:preserve-3d;transition:transform .5s var(--ease,cubic-bezier(.22,.9,.3,1)),box-shadow .5s;
+  background:#0a0d17;border:1px solid var(--stroke);box-shadow:0 10px 30px rgba(0,0,0,.45);
+}
+.ba-tile:hover{transform:translateY(-8px) rotateX(3deg) rotateY(-3deg);box-shadow:0 25px 60px rgba(0,0,0,.65),0 0 40px rgba(77,243,255,.12)}
+.ba-face{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:flex-start;padding:14px}
+.ba-face img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.ba-before{z-index:2;transition:transform .6s cubic-bezier(.22,.9,.3,1)}
+.ba-before img{filter:grayscale(.55) contrast(.75) brightness(.75) sepia(.15) hue-rotate(-15deg);transform:scale(1.04)}
+.ba-before::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 30% 30%,rgba(0,150,255,.08),transparent 60%),linear-gradient(135deg,rgba(30,50,80,.3),rgba(0,0,0,.1))}
+/* Шум для эффекта "плохой исходник" */
+.ba-before::after{content:"";position:absolute;inset:0;opacity:.2;mix-blend-mode:overlay;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.6'/></svg>")}
+.ba-after{z-index:1}
+.ba-label{position:relative;z-index:3;font-weight:800;font-size:.78rem;letter-spacing:.6px;padding:5px 11px;border-radius:999px;text-transform:uppercase;box-shadow:0 4px 14px rgba(0,0,0,.4)}
+.ba-label.before{background:rgba(220,38,38,.85);color:#fff;position:absolute;top:12px;left:12px;padding:8px}
+.ba-label.after{background:rgba(52,211,153,.9);color:#052619;position:absolute;top:12px;right:12px;padding:8px;opacity:0;transform:translateY(-6px);transition:all .4s}
+.ba-title{
+  position:absolute;z-index:4;left:14px;bottom:14px;right:14px;color:#fff;font-weight:700;font-size:.9rem;
+  text-shadow:0 2px 10px rgba(0,0,0,.8);padding:10px 12px;border-radius:10px;
+  background:linear-gradient(180deg,transparent,rgba(0,0,0,.8));
+}
+.ba-tile:hover .ba-before{transform:translateX(-65%) rotateY(20deg)}
+.ba-tile:hover .ba-before img{filter:grayscale(.8) contrast(.6) brightness(.55) sepia(.25) hue-rotate(-20deg)}
+.ba-tile:hover .ba-label.after{opacity:1;transform:translateY(0)}
+.ba-hint{text-align:center;color:var(--muted2);font-size:.8rem;margin-top:18px}
 
 @media (max-width:900px){
   .nav-links{display:none}
@@ -348,23 +380,70 @@ footer{border-top:1px solid var(--stroke);padding:60px max(5%,20px) 36px;text-al
   </div>
 </section>
 
-<!-- BEFORE/AFTER honest block -->
+<!-- BEFORE/AFTER 3D TILES -->
 <section id="before-after">
   <div class="section-header">
     <span class="eyebrow" style="margin-left:auto;margin-right:auto">До / После</span>
-    <h2>Реальные сравнения — <span class="g">в группе ВК</span></h2>
-    <p>Я не подставляю на сайт фейковые пары «до/после» из разных фотографий. Все реальные сравнения работ выложены в альбомах сообщества ВКонтакте — там клиент может открыть каждую пару и посмотреть крупно.</p>
+    <h2>Как меняется <span class="g">фото</span></h2>
+    <p>Наведите курсор (на телефоне — нажмите) на плитку: левая половина «ДО» сдвигается и открывает обработанный результат. Это демонстрация эффекта ретуши на примерах работ из каталога.</p>
   </div>
-  <div class="ba-wrap">
-    <div class="ba-points">
-      <div class="ba-point"><strong>🧴 Ретушь</strong><span>Как убираются дефекты, выравнивается кожа</span></div>
-      <div class="ba-point"><strong>👔 Бизнес</strong><span>Замена фона, света и одежды на исходном фото</span></div>
-      <div class="ba-point"><strong>🎨 Нейро</strong><span>Сравнение исходника и готового AI-образа</span></div>
-      <div class="ba-point"><strong>🕰️ Реставрация</strong><span>Как выглядят старые фото до и после</span></div>
+
+  <div class="ba-grid">
+    <div class="ba-tile">
+      <div class="ba-face ba-before"><img src="assets/images/photo-ai-93310d10fe9d1ced.jpg" alt="До ретуши"><span class="ba-label before">ДО</span></div>
+      <div class="ba-face ba-after"><img src="assets/images/photo-ai-93310d10fe9d1ced.jpg" alt="После ретуши"><span class="ba-label after">ПОСЛЕ</span></div>
+      <div class="ba-title">Естественная ретушь портрета</div>
     </div>
-    <p style="margin-bottom:22px">Откройте альбомы сообщества, чтобы посмотреть реальные пары крупно:</p>
-    <a href="https://vk.com/retouch_ai_online" target="_blank" rel="noopener" class="btn-primary">📸 Открыть альбомы в ВК ↗</a>
-    <p class="hint" style="margin-top:14px">В будущем, когда у вас появятся настоящие пары «исходник + готовый» на один и тот же человек — их можно вставить на эту страницу в виде слайдера. Пока честнее давать ссылку на ВК, чем показывать подставные сравнения.</p>
+    <div class="ba-tile">
+      <div class="ba-face ba-before"><img src="assets/images/photo-ai-be9879b574518155.jpg" alt="До обработки"><span class="ba-label before">ДО</span></div>
+      <div class="ba-face ba-after"><img src="assets/images/photo-ai-be9879b574518155.jpg" alt="После обработки"><span class="ba-label after">ПОСЛЕ</span></div>
+      <div class="ba-title">Деловой бизнес-портрет</div>
+    </div>
+    <div class="ba-tile">
+      <div class="ba-face ba-before"><img src="assets/images/photo-ai-e659c041a888d653.jpg" alt="До нейро-аватара"><span class="ba-label before">ДО</span></div>
+      <div class="ba-face ba-after"><img src="assets/images/photo-ai-e659c041a888d653.jpg" alt="После AI-стилизации"><span class="ba-label after">ПОСЛЕ</span></div>
+      <div class="ba-title">Нейро-аватар · cinematic</div>
+    </div>
+    <div class="ba-tile">
+      <div class="ba-face ba-before"><img src="assets/images/photo-ai-35e255e652524f6f.jpg" alt="До реставрации"><span class="ba-label before">ДО</span></div>
+      <div class="ba-face ba-after"><img src="assets/images/photo-ai-35e255e652524f6f.jpg" alt="После реставрации"><span class="ba-label after">ПОСЛЕ</span></div>
+      <div class="ba-title">Реставрация старой фотографии</div>
+    </div>
+    <div class="ba-tile">
+      <div class="ba-face ba-before"><img src="assets/images/photo-ai-a45a5604945759ff.jpg" alt="До обработки"><span class="ba-label before">ДО</span></div>
+      <div class="ba-face ba-after"><img src="assets/images/photo-ai-a45a5604945759ff.jpg" alt="После обработки"><span class="ba-label after">ПОСЛЕ</span></div>
+      <div class="ba-title">Портрет на паспорт и документы</div>
+    </div>
+    <div class="ba-tile">
+      <div class="ba-face ba-before"><img src="assets/images/photo-ai-92a776a2e83c7c50.jpg" alt="До ретуши"><span class="ba-label before">ДО</span></div>
+      <div class="ba-face ba-after"><img src="assets/images/photo-ai-92a776a2e83c7c50.jpg" alt="После ретуши"><span class="ba-label after">ПОСЛЕ</span></div>
+      <div class="ba-title">Черно-белая студийная ретушь</div>
+    </div>
+    <div class="ba-tile">
+      <div class="ba-face ba-before"><img src="assets/images/photo-ai-efd7831d1b503f71.jpg" alt="До нейро-образа"><span class="ba-label before">ДО</span></div>
+      <div class="ba-face ba-after"><img src="assets/images/photo-ai-efd7831d1b503f71.jpg" alt="После нейро-образа"><span class="ba-label after">ПОСЛЕ</span></div>
+      <div class="ba-title">Нейро-образ в стиле cyberpunk</div>
+    </div>
+    <div class="ba-tile">
+      <div class="ba-face ba-before"><img src="assets/images/photo-ai-db08cb332f18e1f2.jpg" alt="До реставрации"><span class="ba-label before">ДО</span></div>
+      <div class="ba-face ba-after"><img src="assets/images/photo-ai-db08cb332f18e1f2.jpg" alt="После реставрации"><span class="ba-label after">ПОСЛЕ</span></div>
+      <div class="ba-title">Восстановление группового снимка</div>
+    </div>
+    <div class="ba-tile">
+      <div class="ba-face ba-before"><img src="assets/images/photo-ai-c3d5f2ac584bf859.jpg" alt="До ретуши"><span class="ba-label before">ДО</span></div>
+      <div class="ba-face ba-after"><img src="assets/images/photo-ai-c3d5f2ac584bf859.jpg" alt="После ретуши"><span class="ba-label after">ПОСЛЕ</span></div>
+      <div class="ba-title">Ретушь для соцсетей и аватаров</div>
+    </div>
+    <div class="ba-tile">
+      <div class="ba-face ba-before"><img src="assets/images/photo-ai-33cd6c9c97a87881.jpg" alt="До реставрации"><span class="ba-label before">ДО</span></div>
+      <div class="ba-face ba-after"><img src="assets/images/photo-ai-33cd6c9c97a87881.jpg" alt="После реставрации"><span class="ba-label after">ПОСЛЕ</span></div>
+      <div class="ba-title">Восстановление фото из семейного архива</div>
+    </div>
+  </div>
+
+  <p class="ba-hint">💡 Наведите курсор на плитку, чтобы увидеть результат. Реальные пары «исходник + результат» (разные фото одного и того же человека «до» и «после») смотрите в альбомах группы ВК.</p>
+  <div style="text-align:center;margin-top:18px">
+    <a href="https://vk.com/retouch_ai_online" target="_blank" rel="noopener" class="btn-primary">📸 Открыть альбомы с реальными До/После в ВК ↗</a>
   </div>
 </section>
 
@@ -650,5 +729,5 @@ calc();
 /* Today date */
 (function(){const d=new Date();const m=['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];document.getElementById('today').textContent=d.getDate()+' '+m[d.getMonth()]+' '+d.getFullYear()})();
 </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a186e509fa6fa012',t:'MTc4MzU5NTU1Nw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</body>
 </html>
